@@ -7,7 +7,7 @@ def show_graphs(screen):
     try:
         df = pd.read_csv("game_data.csv")
 
-        # Convert cumulative → per-interval
+        # Convert cumulative to per-interval
         df["zombies_killed_elapsed"] = df["zombies_killed"].diff().fillna(df["zombies_killed"])
         df["trash_collected_elapsed"] = df["trash_collected"].diff().fillna(df["trash_collected"])
         df["bullets_fired_elapsed"] = df["bullets_fired"].diff().fillna(df["bullets_fired"])
@@ -17,6 +17,23 @@ def show_graphs(screen):
         # Elimination percentage per interval
         df["total_actions_elapsed"] = df["zombies_killed_elapsed"] + df["trash_collected_elapsed"] + df["leftover_elapsed"]
         df["elimination_pct_elapsed"] = (df["zombies_killed_elapsed"] + df["trash_collected_elapsed"]) / df["total_actions_elapsed"].replace(0, 1) * 100
+
+        # Compute  statistics
+        stats_data = {
+            "Scores": df["score_elapsed"],
+            "Trash Collected": df["trash_collected_elapsed"],
+            "Zombies Killed": df["zombies_killed_elapsed"]
+        }
+
+        summary = {}
+        for key, series in stats_data.items():
+            summary[key] = {
+                "Range": series.max() - series.min(),
+                "Mean": series.mean(),
+                "Median": series.median(),
+                "Mode": series.mode().iloc[0] if not series.mode().empty else None
+            }
+
         
     except FileNotFoundError:
         screen.fill((30, 30, 30))
@@ -85,10 +102,33 @@ def show_graphs(screen):
                 labels=["Zombie Points", "Trash Points"],
                 autopct="%1.1f%%", colors=["red", "blue"])
         plt.title("Points Collection Breakdown (per 5s)")
+    
+    def plot_stats_table():
+        plt.figure(figsize=(10, 6))   # more space
+        plt.axis("off")
+
+        columns = ["Range", "Mean", "Median", "Mode"]
+        rows = list(summary.keys())
+        cell_text = [[f"{summary[row][col]:.2f}" if summary[row][col] is not None else "N/A"
+                    for col in columns] for row in rows]
+
+        table = plt.table(cellText=cell_text,
+                        rowLabels=rows,
+                        colLabels=columns,
+                        loc="center")
+
+        table.auto_set_font_size(False)
+        table.set_fontsize(12)
+        table.scale(1.0, 1.5)   # adjust scaling so it fits
+
+        plt.title("Statistics Summary (Scores, Trash, Zombies)")
+        plt.tight_layout()
+
+
 
     # List of graphs
     graphs = [plot_bar, plot_elimination, plot_bullets_vs_kills,
-              plot_points_vs_time, plot_leftover_vs_elimination, plot_pie_points]
+              plot_points_vs_time, plot_leftover_vs_elimination, plot_pie_points, plot_stats_table]
 
     index = 0
     running = True
