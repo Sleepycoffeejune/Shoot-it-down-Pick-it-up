@@ -1,6 +1,6 @@
 import pygame 
 
-import pygame
+import data_stats
 
 class Menu:
     def __init__(self, screen):
@@ -9,13 +9,14 @@ class Menu:
         self.smoll_font = pygame.font.SysFont(None, 30)
 
         # Main menu buttons
-        self.start_button = pygame.Rect(300, 250, 200, 80)
-        self.quit_button = pygame.Rect(300, 470, 200, 80)
+        self.start_button = pygame.Rect(300, 250, 200, 60)
+        self.story_button = pygame.Rect(300, 330, 200, 60)
+        self.stats_button = pygame.Rect(300, 410, 200, 60)
+        self.quit_button = pygame.Rect(300, 490, 200, 60)
+  
 
-        #Story mode
-        self.story_button = pygame.Rect(300, 360, 200, 80)
         self.story_mode = False
-
+        self.show_stats = False
 
         # Pause menu buttons
         self.continue_button = pygame.Rect(300, 250, 200, 80)
@@ -28,13 +29,13 @@ class Menu:
     def draw_main(self):
         self.screen.fill((30, 30, 30))
         title = self.font.render("Shoot it down Pick it up", True, (255, 255, 255))
-        sub_title = self.smoll_font.render("Demo 1", True, (225, 225, 225))
+        sub_title = self.smoll_font.render("Demo 1.0", True, (225, 225, 225))
         
         center_x = 400
         self.screen.blit(title, (center_x - title.get_width() //2, 150))
         self.screen.blit(sub_title, (center_x - sub_title.get_width() //2, 150 + title.get_height()))
 
-        mouse_pos = pygame.mouse.get_pos()  # current mouse position
+        mouse_pos = pygame.mouse.get_pos()
 
         # Start button
         start_color = (0, 200, 0) if self.start_button.collidepoint(mouse_pos) else (0, 150, 0)
@@ -48,6 +49,12 @@ class Menu:
         story_text = self.font.render("Story Mode", True, (255, 255, 255))
         self.screen.blit(story_text, story_text.get_rect(center=self.story_button.center))
 
+        # Stats button
+        stats_color = (0, 200, 200) if self.stats_button.collidepoint(mouse_pos) else (0, 150, 150)
+        pygame.draw.rect(self.screen, stats_color, self.stats_button)
+        stats_text = self.font.render("Stats", True, (255, 255, 255))
+        self.screen.blit(stats_text, stats_text.get_rect(center=self.stats_button.center))
+
         # Quit button
         quit_color = (200, 0, 0) if self.quit_button.collidepoint(mouse_pos) else (150, 0, 0)
         pygame.draw.rect(self.screen, quit_color, self.quit_button)
@@ -55,6 +62,26 @@ class Menu:
         self.screen.blit(quit_text, quit_text.get_rect(center=self.quit_button.center))
 
         pygame.display.flip()
+
+    def handle_event_main(self, event):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.start_button.collidepoint(event.pos):
+                self.active = False
+                self.start_game = True
+                self.story_mode = False
+            elif self.story_button.collidepoint(event.pos):
+                self.active = False
+                self.start_game = True
+                self.story_mode = True
+            elif self.stats_button.collidepoint(event.pos):
+                self.active = False
+                self.show_stats = True   
+            elif self.quit_button.collidepoint(event.pos):
+                pygame.quit()
+                exit()
 
     def draw_pause(self, frozen_frame):
         # Draw the frozen game scene
@@ -78,25 +105,6 @@ class Menu:
         self.screen.blit(quit_text, quit_text.get_rect(center=self.pause_quit_button.center))
 
         pygame.display.flip()
-
-
-    def handle_event_main(self, event):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.start_button.collidepoint(event.pos):
-                self.active = False
-                self.start_game = True
-                self.story_mode = False   # Normal mode
-            elif self.story_button.collidepoint(event.pos):
-                self.active = False
-                self.start_game = True
-                self.story_mode = True    # Story mode
-            elif self.quit_button.collidepoint(event.pos):
-                pygame.quit()
-                exit()
-
 
     def handle_event_pause(self, event):
         if event.type == pygame.QUIT:

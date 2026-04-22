@@ -3,6 +3,7 @@ import time
 import random
 
 from menu import Menu
+import data_stats
 from game_status import GameStatus
 from scoreboard import Scoreboard
 from player import Player, HEALTH
@@ -42,7 +43,7 @@ spawn_counts = {
 
 
 last_spawn_time = {}
-SPAWN_COOLDOWN = 60000
+SPAWN_COOLDOWN = 180000
 
 debug_mode = False
 game_is_on = True
@@ -63,6 +64,12 @@ while menu.active:
         menu.handle_event_main(event)
     menu.draw_main()
     time.sleep(0.1)
+
+# If Stats button clicked
+if menu.show_stats:
+    data_stats.show_graphs(screen)
+    menu.active = True
+    menu.show_stats = False
 
 page = None
 trash_num = random.randint(30, 80)
@@ -185,6 +192,7 @@ if menu.start_game:
                         player.gun()
                     if event.key == pygame.K_SPACE:
                         player.shoot(bullet_group)
+                        game_status.bullets_fired += 1
                     if event.key == pygame.K_TAB:
                         debug_mode = not debug_mode
         
@@ -193,13 +201,13 @@ if menu.start_game:
             bullet_group.update()
 
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_w]:
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
                 player.move_up(BG, zombies_by_bg)
-            elif keys[pygame.K_s]:
+            elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
                 player.move_down(BG, zombies_by_bg)
-            elif keys[pygame.K_a]:
+            elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
                 player.move_left(BG, zombies_by_bg)
-            elif keys[pygame.K_d]:
+            elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                 player.move_right(BG, zombies_by_bg)
             if keys[pygame.K_e]:
                 # pickup zombie remains
@@ -277,6 +285,8 @@ if menu.start_game:
                             if zombie.rect.colliderect(bullet.rect) and zombie.state != "dead":
                                 zombie.take_damage(player.damage)
                                 bullet.kill()
+                                if zombie.state == "dead":
+                                    game_status.zombies_killed += 1
                         if zombie.state != "dead" and player.rect.colliderect(zombie.rect):
                             offset_player = (zombie.rect.x - player.rect.x, zombie.rect.y - player.rect.y)
                             if player.mask.overlap(zombie.mask, offset_player):
@@ -369,6 +379,8 @@ if menu.start_game:
             player_group.update()
             scoreboard.draw(screen, story_mode=menu.story_mode)
             player.draw_inventory(screen)
+
+        game_status.log_data(scoreboard, trash_items, zombies_by_bg)
 
 
         if game_over:
