@@ -104,7 +104,12 @@ Tips:
 
 ## Known Bugs
 - A bug in story mode ending if the player collected 7 pages but the infection rates reached 100%
-- The statistic graphs are only accessible from the menu GUI, and in order to go through each graphs the current graph window need to be close first.
+- The statistics graphs currently display all elapsed time data on a single x-axis.  
+- Because I was unable to implement a scrollable x-axis, the graphs appear squished together when the dataset grows large (over 100 rows).  
+- Attempts to make the x-axis scrollable caused the graph window to freeze. This happened because Matplotlib’s interactive window loop conflicted with the main Pygame loop, only one event loop could run at a time, so the graph could not update dynamically without blocking the game.
+- In order to view each graph, the current graph window need to be close first before viewing the next one. 
+
+
 
 ---
 
@@ -115,5 +120,5 @@ Tips:
 ---
 
 ## External sources
-- Error detection hand tested by me, and code refinement suggestion is suggested by Copilot.
+- Code refinement and debugging suggestions provided by Microsoft Copilot.
 
