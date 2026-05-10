@@ -2,7 +2,7 @@
 
 ## Project Description
 
-- Project by: W.W. 5913
+- Project by: Wiran 5913
 - Game Genre: Shooter game
 
 **Shoot it down Pick it up** is a simple 2D pixel shooting game where player take the role of a trash collector in a zombie-infested-town in the middle of nowhere.
