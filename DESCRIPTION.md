@@ -23,10 +23,18 @@ Shoot it down Pick it up
   - Animated sprites for player and zombie characters  
   - Health bars and infection rate mechanics  
   - Data logging into CSV files for statistical tracking
-
+  
+- **Screenshots:**  
+   ![Menu](screenshots/game_play/menu.png)
+   ![Main1](screenshots/game_play/main_game1.png)
+   ![Main2](screenshots/game_play/main_game2.png)
+   ![Main3](screenshots/game_play/main_game3.png)
+   ![Pause](screenshots/game_play/pause_screen.png)
+   ![Gameover](screenshots/game_play/gameover.png)
+  
 - **Proposal:** [Original project proposal(PDF)](Original_Project_Proposal.pdf)
 
-- **Youtube video:**  
+- **Youtube video:**  https://youtu.be/Ag4DfNvyMO0?si=SvykiM7MmQ3f_r1v
 ---
 
 ## 2. Concept
