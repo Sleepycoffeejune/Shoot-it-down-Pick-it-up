@@ -20,5 +20,8 @@ ENV/
 *.tmp
 *.swp
 
-#test image
-/test_img
+# test image
+test_img/
+
+# stats -optional
+.game_data
